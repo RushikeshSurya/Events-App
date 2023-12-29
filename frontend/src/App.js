@@ -1,53 +1,70 @@
-import {
-  Route,
-  RouterProvider,
-  createBrowserRouter,
-  createRoutesFromElements,
-} from "react-router-dom";
-import Events, { loader as eventsLoader } from "./pages/EventsPage";
-import EventDetails, {
-  loader as eventDetailsLoader,
-  action as eventDetailsAction,
-} from "./pages/EventDetailsPage";
-import NewEvent, { action as newEventAction } from "./pages/NewEventPage";
+import { RouterProvider, createBrowserRouter } from "react-router-dom";
+
 import EditEvent from "./pages/EditEventPage";
-import Error from "./pages/Error";
-import Root from "./pages/Root";
-import Home from "./pages/HomePage";
+import ErrorPage from "./pages/Error";
+import EventDetail, {
+  loader as eventDetailLoader,
+  action as deleteEventAction,
+} from "./pages/EventDetailsPage";
+import Event, { loader as eventsLoader } from "./pages/EventsPage";
 import EventsLayout from "./pages/EventsLayout";
+import HomePage from "./pages/HomePage";
+import NewEventPage from "./pages/NewEventPage";
+import RootLayout from "./pages/Root";
+import { action as manipulateEventAction } from "./components/EventForm";
+import NewsletterPage, { action as newsletterAction } from "./pages/NewsLetter";
 
-const routeElemens = createRoutesFromElements([
-  <Route
-    path="/"
-    element={<Root />}
-    children={[
-      <Route index element={<Home />} />,
-      <Route
-        path="events"
-        element={<EventsLayout />}
-        children={[
-          <Route index loader={eventsLoader} element={<Events />} />,
-          <Route
-            path=":eventId"
-            loader={eventDetailsLoader}
-            action={eventDetailsAction}
-            id="event-details"
-            children={[
-              <Route index action={eventDetailsAction} element={<EventDetails />} />,
-              <Route path="edit" element={<EditEvent />} />,
-            ]}
-          />,
-
-          <Route path="new" element={<NewEvent />} action={newEventAction} />,
-        ]}
-      />,
-    ]}
-    errorElement={<Error />}
-  />,
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <RootLayout />,
+    errorElement: <ErrorPage />,
+    children: [
+      { index: true, element: <HomePage /> },
+      {
+        path: "events",
+        element: <EventsLayout />,
+        children: [
+          {
+            index: true,
+            element: <Event />,
+            loader: eventsLoader,
+          },
+          {
+            path: ":eventId",
+            id: "event-detail",
+            loader: eventDetailLoader,
+            children: [
+              {
+                index: true,
+                element: <EventDetail />,
+                action: deleteEventAction,
+              },
+              {
+                path: "edit",
+                element: <EditEvent />,
+                action: manipulateEventAction,
+              },
+            ],
+          },
+          {
+            path: "new",
+            element: <NewEventPage />,
+            action: manipulateEventAction,
+          },
+        ],
+      },
+      {
+        path: "newsletter",
+        element: <NewsletterPage />,
+        action: newsletterAction,
+      },
+    ],
+  },
 ]);
-const AppRouter = createBrowserRouter(routeElemens);
+
 function App() {
-  return <RouterProvider router={AppRouter} />;
+  return <RouterProvider router={router} />;
 }
 
 export default App;

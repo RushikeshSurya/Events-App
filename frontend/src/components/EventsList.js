@@ -2,7 +2,6 @@ import { Link, useLoaderData } from "react-router-dom";
 import classes from "./EventsList.module.css";
 
 function EventsList({events}) {
-  console.log("logging events", events)
 
   return (
     <div className={classes.events}>
@@ -10,7 +9,6 @@ function EventsList({events}) {
       <ul className={classes.list}>
         {events.map((event) => (
           <li key={event.id} className={classes.item}>
-            {console.log("events url", event.id)}
             <Link to={event.id}>
               <img src={event.image} alt={event.title} />
               <div className={classes.content}>

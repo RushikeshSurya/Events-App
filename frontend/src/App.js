@@ -13,12 +13,19 @@ import NewEventPage from "./pages/NewEventPage";
 import RootLayout from "./pages/Root";
 import { action as manipulateEventAction } from "./components/EventForm";
 import NewsletterPage, { action as newsletterAction } from "./pages/NewsLetter";
+import AuthenticationPage, {
+  action as authAction,
+} from "./pages/Authentication";
+import {action as logoutAction} from "./pages/Logout.js"
+import { checkAuthLoader, tokenLoader } from "./util/auth.js";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <RootLayout />,
     errorElement: <ErrorPage />,
+    id: "root",
+    loader: tokenLoader,
     children: [
       { index: true, element: <HomePage /> },
       {
@@ -32,7 +39,7 @@ const router = createBrowserRouter([
           },
           {
             path: ":eventId",
-            id: "event-detail",
+            id: "event-details",
             loader: eventDetailLoader,
             children: [
               {
@@ -43,6 +50,7 @@ const router = createBrowserRouter([
               {
                 path: "edit",
                 element: <EditEvent />,
+                loader: checkAuthLoader,
                 action: manipulateEventAction,
               },
             ],
@@ -50,9 +58,20 @@ const router = createBrowserRouter([
           {
             path: "new",
             element: <NewEventPage />,
+            loader: checkAuthLoader,
             action: manipulateEventAction,
           },
         ],
+      },
+      ,
+      {
+        path: "auth",
+        element: <AuthenticationPage />,
+        action : authAction
+      },
+      {
+        path: "logout",
+        action: logoutAction
       },
       {
         path: "newsletter",

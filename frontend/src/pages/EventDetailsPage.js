@@ -1,12 +1,10 @@
-import {
-  json,
-  redirect,
-  useRouteLoaderData,
-} from "react-router-dom";
+import { json, redirect, useRouteLoaderData } from "react-router-dom";
 import EventItem from "../components/EventItem";
+import { getAuthToken } from "../util/auth";
 
 export default function EventDetails() {
   const data = useRouteLoaderData("event-details");
+  console.log("data event", data)
 
   return <EventItem event={data.event} />;
 }
@@ -24,11 +22,13 @@ export async function loader({ request, params }) {
 }
 
 export async function action({ params, request }) {
-  console.log("in action")
   const eventId = params.eventId;
-
+  const token = getAuthToken();
   const response = await fetch("http://localhost:8080/events/" + eventId, {
     method: request.method,
+    headers: {
+      "Authorization": "Bearer " + token,
+    },
   });
 
   if (!response.ok) {

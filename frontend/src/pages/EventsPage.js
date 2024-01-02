@@ -25,7 +25,6 @@ export async function eventsloader() {
     });
   } else {
     const resData = await response.json();
-    console.log("events from api", resData)
     return resData.events;
   }
 }
